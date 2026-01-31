@@ -16,7 +16,6 @@ export type Product = {
 }
 
 export async function fetchProduct(id: number) {
-  //await delay(5_000);
   const response = await fetch("https://fakestoreapi.com/products/" + encodeURIComponent(id))
   const data = await response.json()
   return data as Product
