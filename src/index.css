@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+a {
+    @apply hover:underline;
+}
+
+.router-link-active {
+    @apply underline;    
+}
