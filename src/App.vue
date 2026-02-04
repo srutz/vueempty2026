@@ -1,37 +1,11 @@
 <script setup lang="ts">
-import { useQueryClient } from "@tanstack/vue-query";
-import { fetchProduct, useProduct } from "./composables/useProduct";
-import "./index.css";
+import { useProduct } from "./composables/useProduct";
+import "./index.css"; 
 import { ref } from "vue";
 import ProductView from "./components/ProductView.vue";
 
-const client = useQueryClient();
-const PREFETCH = !true;
-if (PREFETCH) {
-  (async () => {
-    for (let i = 1; i <= 10; i++) {
-      client.ensureQueryData({
-        queryKey: ["product", i],
-        staleTime: 1000 * 60 * 5,
-        queryFn: () => {
-          return fetchProduct(i).then((data) => {
-            console.log("Prefetched product", data);
-            return data;
-          });
-        }
-      })
-      await delay(250);
-    }
-  })()
-}
-
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 const id = ref(1)
-const query = useProduct(id);
-const { data: product } = query
+const { data: product } = useProduct(id);
 
 </script>
 
