@@ -1,21 +1,12 @@
 <script setup lang="ts">
 import { useProduct } from "./composables/useProduct";
 import "./index.css"; 
-import { ref, watch, watchEffect } from "vue";
+import { computed } from "vue";
 import ProductView from "./components/ProductView.vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute()
-const idNum = ref(Number.parseInt(route.params.id?.toString() || "-1", 10))
-
-// Watch for route ID changes
-watch(
-  () => route.params.id,
-  (newId) => {
-    idNum.value = Number.parseInt(newId?.toString() || "-1", 10)
-    console.log('Route ID changed to:', newId)
-  },
-)
+const idNum = computed(() => Number.parseInt(route.params.id?.toString() || "-1", 10))
 
 const { data: product } = useProduct(idNum);
 
