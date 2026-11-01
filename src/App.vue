@@ -1,11 +1,8 @@
 <script setup lang="ts"></script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div class="bg-indigo-200 grow flex items-center justify-center flex flex-col gap-2">
+    <p>Hello World</p>
+    <button>Click Me</button>
+  </div>
 </template>
-
-<style scoped></style>
