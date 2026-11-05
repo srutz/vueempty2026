@@ -11,7 +11,10 @@ const { data } = useQuotes(page);
 <template>
   <div class="bg-indigo-200 grow flex items-center
       flex flex-col gap-2 p-2">
-      <button @click="page++">Next</button>
+      <div class="flex gap-2">
+        <button @click="page--">Prev</button>
+        <button @click="page++">Next</button>
+      </div>
       <QuotesList :quotes="data?.quotes || []" />
   </div>
 </template>
