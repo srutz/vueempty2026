@@ -1,6 +1,5 @@
 import { onMounted, ref, watch, type Ref } from 'vue'
 
-
 export type QuoteType = { quote: string, author: string, id: number }
 
 export function useQuote(id: Ref<number>) {
