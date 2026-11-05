@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useQuote } from './useQuote';
+import QuotesList from './QuotesList.vue';
+import { useQuotes } from './useQuotes';
 
-const qid = ref(1)
-const { quote } = useQuote(qid);
-
+const page = ref(1)
+const { data } = useQuotes(page);
 
 </script>
 
 <template>
   <div class="bg-indigo-200 grow flex items-center
       flex flex-col gap-2 p-2">
-    <p>{{ quote?.quote }}</p>
-    <div class="text-xs"> {{ quote?.author }}</div>
-    <button @click="qid++">Next</button>
-    {{ formatted }}
+      <button @click="page++">Next</button>
+      <QuotesList :quotes="data?.quotes || []" />
   </div>
 </template>
