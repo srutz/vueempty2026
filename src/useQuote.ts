@@ -13,7 +13,9 @@ export function useQuote(id: Ref<number>) {
     quote.value = await response.json() as QuoteType
   }
   onMounted(() => doLoad())
-  watch([id], () => doLoad())
+  watch([id], () => {
+    doLoad()
+  })
 
   return { quote }
 }
