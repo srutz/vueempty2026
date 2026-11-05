@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import { ref } from 'vue';
-import QuotesList from './QuotesList.vue';
-import { useQuotes } from './useQuotes';
-
-const page = ref(1)
-const { data } = useQuotes(page);
-
-</script>
-
 <template>
-  <div class="bg-indigo-200 grow flex items-center
-      flex flex-col gap-2 p-2">
-      <div class="flex gap-2">
-        <button @click="page--">Prev</button>
-        <button @click="page++">Next</button>
-      </div>
-      <QuotesList :quotes="data?.quotes || []" />
-  </div>
+  <RouterView></RouterView>
 </template>
