@@ -1,4 +1,5 @@
-import { ref, toValue, watchEffect, type MaybeRefOrGetter } from 'vue'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { queryOptions, useQuery } from '@tanstack/vue-query'
 
 export type QuoteType = { quote: string, author: string, id: number }
 
@@ -7,38 +8,32 @@ export type UseQuoteOptions = {
   id?: MaybeRefOrGetter<number | undefined>
 }
 
+/** Plain loader for a single quote, independent of vue. */
+export async function fetchQuote(id: number, signal?: AbortSignal): Promise<QuoteType> {
+  const response = await fetch(`https://dummyjson.com/quotes/${id}`, { signal })
+  if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`)
+  return await response.json() as QuoteType
+}
+
+/** Shared query definition so useQuote and the warm-up hit the same cache entry. */
+export function quoteQueryOptions(id: number | undefined) {
+  return queryOptions({
+    queryKey: ['quote', id],
+    enabled: id !== undefined && Number.isFinite(id),
+    queryFn: ({ signal }) => fetchQuote(id!, signal),
+  })
+}
+
 /**
  * Loads a single quote. `id` may be a plain number, a ref or a getter.
- * Re-fetches when it changes and aborts any in-flight request.
+ * Re-fetches when it changes; vue-query aborts/ignores superseded requests and caches results.
  */
 export function useQuote(options: UseQuoteOptions = {}) {
-  const loading = ref(false)
-  const error = ref<Error | null>(null)
-  const quote = ref<QuoteType | null>(null)
+  const query = useQuery(computed(() => quoteQueryOptions(toValue(options.id))))
 
-  watchEffect(async (onCleanup) => {
-    const id = toValue(options.id)
-    if (id === undefined || !Number.isFinite(id)) {
-      quote.value = null
-      return
-    }
-    const controller = new AbortController()
-    onCleanup(() => controller.abort())
-
-    loading.value = true
-    error.value = null
-    try {
-      const response = await fetch(`https://dummyjson.com/quotes/${id}`, { signal: controller.signal })
-      if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`)
-      quote.value = await response.json() as QuoteType
-    } catch (e) {
-      if (controller.signal.aborted) return // superseded by a newer request
-      quote.value = null
-      error.value = e instanceof Error ? e : new Error(String(e))
-    } finally {
-      if (!controller.signal.aborted) loading.value = false
-    }
-  })
+  const quote = computed(() => query.data.value ?? null)
+  const loading = query.isFetching
+  const error = query.error
 
   return { quote, loading, error }
 }
